@@ -1,5 +1,4 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -10,12 +9,10 @@
         <link href="{% static 'bootstrap-5.3.2-dist/css/bootstrap.min.css' %}" rel="stylesheet">
         <script src="{% static 'script.js' %}"></script>
         <script src="{% static 'bootstrap-5.3.2-dist/js/bootstrap.min.js' %}"></script>
-        
     </head>
     <body>
         <header>
             <h2>Главная</h2>
-
             {% if user.is_authenticated %}
                 <p>Привет, {{ user.username }}!</p>
                 <a href="{% url 'logout' %}">Выйти</a>

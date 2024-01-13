@@ -1,12 +1,11 @@
 from django.shortcuts import render
-from django.http import JsonResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.db import IntegrityError
 from .models import User, Post
 
-# Create your views here.
 
 @login_required
 def index_view(request):
@@ -18,6 +17,7 @@ def index_view(request):
         return render(request, "index.html", context={
             "posts": posts
         })
+    
     
 @login_required
 def post_form_view(request):
@@ -62,10 +62,6 @@ def delete_post_form_view(request):
     post.delete()
     return HttpResponseRedirect(reverse("index"))
 
-    
-
-
-
 
 def login_view(request):
     if request.method == "POST":
@@ -86,7 +82,6 @@ def login_view(request):
     else:
         return render(request, "login.html")
 
-
 def logout_view(request):
     logout(request)
     return HttpResponseRedirect(reverse("index"))
@@ -99,7 +94,6 @@ def register_view(request):
         password = request.POST["password"]
         name = request.POST["name"]
         phone = request.POST["phone"]
-
 
         # Attempt to create new user
         try:

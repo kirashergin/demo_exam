@@ -1,9 +1,6 @@
 {% extends "base.html" %}
-
 {% load static %}
-
 {% block title %}Главная{% endblock %}
-
 {% block body %}
 {% if not request.user.is_superuser %}
     {% if message %}
@@ -20,7 +17,6 @@
         <button class="btn btn-primary" type="submit">Отправить</button>
     </form>
 {% endif %}
-
 {% for post in posts %}
     <div class="card">
         <div class="card-body">
@@ -36,7 +32,6 @@
                     <button type="submit" name="status" value="Отклонено" class="btn btn-primary">Отклонить</button> 
                 </form>
             {% endif %}
-        
             {% if request.user == post.user and post.status == "В работе" %}
             <p class="card-text">{{ post.status }}</p>
             <form method="post" action="delete_post_form">
@@ -48,6 +43,4 @@
         </div>
   </div>
 {% endfor %}
-
-
 {% endblock %}

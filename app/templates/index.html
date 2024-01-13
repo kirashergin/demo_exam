@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}Главная{% endblock %}
+
+{% block body %}
+{% if not request.user.is_superuser %}
+    {% if message %}
+        <div>{{ message }}</div>
+    {% endif %}
+    <form action="{% url 'post_form' %}" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <input minlength="8" maxlength="9" class="form-control" type="text" name="plate" placeholder="Регистрационный номер ">
+        </div>
+        <div class="form-group">
+            <input class="form-control" type="text" name="description" placeholder="Жалоба">
+        </div>
+        <button class="btn btn-primary" type="submit">Отправить</button>
+    </form>
+{% endif %}
+
+{% for post in posts %}
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Заявление №{{ post.id }}{% if request.user.superuser %} от {{ post.user.name }} {% endif %}</h5>
+            <p class="card-text">{{ post.description }}</p>
+            <p class="card-text">Статус: {{ post.status }}</p>
+            <p class="card-text"><small class="text-body-secondary">{{ post.timestamp }}</small></p>
+            {% if request.user.is_superuser and post.status == "В работе" %}
+                <form method="post" action="change_post_status_form">
+                    {% csrf_token %}
+                    <input type="hidden" name="post_id" value="{{ post.id }}">
+                    <button type="submit" name="status" value="Принято" class="btn btn-primary">Принять</button>
+                    <button type="submit" name="status" value="Отклонено" class="btn btn-primary">Отклонить</button> 
+                </form>
+            {% endif %}
+        
+            {% if request.user == post.user and post.status == "В работе" %}
+            <p class="card-text">{{ post.status }}</p>
+            <form method="post" action="delete_post_form">
+                {% csrf_token %}
+                <input type="hidden" name="post_id" value="{{ post.id }}">
+                <button type="submit" class="btn btn-danger">Удалить</button> 
+            </form>
+            {% endif %}
+        </div>
+  </div>
+{% endfor %}
+
+
+{% endblock %}

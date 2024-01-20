@@ -5,13 +5,15 @@ from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.db import IntegrityError
 from .models import User, Post
+import re
+
 
 
 @login_required
 def index_view(request):
     if request.method == "GET":
         if request.user.is_superuser:
-            posts = Post.objects.all()
+            posts = Post.objects.all().order_by("timestamp")
         else:
             posts = Post.objects.filter(user=request.user)
         return render(request, "index.html", context={
@@ -94,6 +96,17 @@ def register_view(request):
         password = request.POST["password"]
         name = request.POST["name"]
         phone = request.POST["phone"]
+
+        if not username or not email or not password or not name or not phone:
+            return render(request, "register.html", {
+                "message": "Заполните все поля"
+            })
+
+        phone_pattern = re.compile(r'^\+7\(\d{3}\)-\d{3}-\d{2}-\d{2}$')
+        if not phone_pattern.match(phone):
+            return render(request, "register.html", {
+                "message": "Введите номер телефона в формате +7(XXX)-XXX-XX-XX"
+            })
 
         # Attempt to create new user
         try:
